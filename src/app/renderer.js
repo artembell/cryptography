@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Example from './components/Example.jsx';
+
 
 ReactDOM.render(
-    React.createElement('h1', {}, 'REACT'),
+    <Example />,
     document.getElementById('root')
 );

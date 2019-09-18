@@ -2,12 +2,15 @@
   "name": "cryptography",
   "version": "1.0.0",
   "description": "Electron + React App",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:react": "webpack --mode development --config-name react-config",
     "build": "webpack --mode development --config-name general-config",
-    "start": "electron ./dist/bundle.js"
+    "start:dev": "webpack-dev-server --hot --inline --progress --colors",
+    "start": "electron ./dist/bundle.js",
+    "dev": "webpack-dev-server --config=./webpack.config.js",
+    "electron": "electron ./main.js"
   },
   "repository": {
     "type": "git",
@@ -28,10 +31,12 @@
     "electron": "^6.0.9",
     "html-webpack-plugin": "^3.2.0",
     "webpack": "^4.40.2",
-    "webpack-cli": "^3.3.8"
+    "webpack-cli": "^3.3.8",
+    "webpack-dev-server": "^3.8.0"
   },
   "dependencies": {
     "react": "^16.9.0",
-    "react-dom": "^16.9.0"
+    "react-dom": "^16.9.0",
+    "react-hot-loader": "^4.12.13"
   }
 }
