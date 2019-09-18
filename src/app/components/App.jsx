@@ -1,6 +1,6 @@
-import { hot } from 'react-hot-loader/root';
-import React from 'react';
+import { hot } from "react-hot-loader/root";
+import React from "react";
 
-const App = () => <h1>wow manoade!!!!r</h1>;
+const App = () => <h1>App Component</h1>;
 
 export default hot(App);
