@@ -7,7 +7,8 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js'
     },
-
+    mode: "development",
+    target: "electron-renderer",
     module: {
         rules: [{
             test: /\.(js|jsx)/,
@@ -23,6 +24,7 @@ module.exports = {
     ],
     devServer: {
         contentBase: path.join(__dirname, 'dist'),
-        port: 9000
+        port: 9000,
+        hot: true
     }
 }
