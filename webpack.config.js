@@ -22,6 +22,9 @@ module.exports = {
             template: './src/index.html'
         })
     ],
+    resolve: {
+        extensions: ['.jsx', '.js']
+    },
     devServer: {
         contentBase: path.join(__dirname, 'dist'),
         port: 9000,
