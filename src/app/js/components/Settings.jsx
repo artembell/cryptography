@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment	} from "react";
 import { Form, FormGroup, FormLabel, FormControl, Row, Col, Button, ButtonToolbar } from "react-bootstrap";
 import {Ciphers} from '../ciphers/index';
 import CipherNames from '../enums/CipherNames';
@@ -11,8 +11,8 @@ export default class Settings extends React.Component {
 
 		this.state = {
 			currentCipherIndex: 0,
-			key: null,
-			plainText: '',
+			key: '4',
+			plainText: 'CRYPTOGRAPHY',
 			cipherText: ''
 		};
 	}
@@ -49,6 +49,10 @@ export default class Settings extends React.Component {
 	onKeyChange(e){
 		const key = e.target.value;
 		this.setState({key});
+	}
+
+	isKeyValid(){
+		return this.state.key === '' && Ciphers[this.state.currentCipherIndex].isKeyValid(this.state.key);
 	}
 
 	render() {
@@ -88,25 +92,29 @@ export default class Settings extends React.Component {
 							onChange={(e) => this.onKeyChange(e)} 
 							type="text" 
 							placeholder="Enter key"
+							value={this.state.key}
 						/>
 						<Form.Text className="text-muted">
-							This key must contain letters only! (or not)
+							{Ciphers[this.state.currentCipherIndex].keyRequirements.map((requirement, index) => {
+								return <Fragment key={index}>{requirement}<br/></Fragment>
+							})}
 						</Form.Text>
 					</Col>
 					<Col>
 						<ButtonToolbar>
-							<Button onClick={(e) => this.onEncipherClick(e)} variant="success" size="lg">Encipher</Button>
-							<Button onClick={(e) => this.onDecipherClick(e)} variant="warning" size="lg">Decipher</Button>
+							<Button disabled={this.isKeyValid()} onClick={(e) => this.onEncipherClick(e)} variant="success" size="lg">Encipher</Button>
+							<Button disabled={this.isKeyValid()} onClick={(e) => this.onDecipherClick(e)} variant="warning" size="lg">Decipher</Button>
 						</ButtonToolbar>
 					</Col>
 				</Row>
 
 				<Form.Group controlId="exampleForm.ControlTextarea1">
-					<Form.Label>Example textarea1</Form.Label>
+					<Form.Label>Plaintext</Form.Label>
 					<Form.Control 
 						onChange={(e) => this.onPlainTextChange(e)} 
 						as="textarea"
 						rows="3"
+						placeholder="Plaintext "
 						value={this.state.plainText}
 					/>
 				</Form.Group>
