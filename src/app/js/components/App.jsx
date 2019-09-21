@@ -5,9 +5,7 @@ import "../../styles/main.css";
 import Settings from "./Settings";
 
 const App = () => (
-	<div class="container">
-		<h1>App React Component</h1>
-		<button className="btn btn-success">Decipher!</button>
+	<div className="container">
 		<Settings />
 	</div>
 );
