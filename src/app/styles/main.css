@@ -1,3 +1,7 @@
 body{
-    background-color: hotpink;
+    background-color: white;
+}
+
+.row{
+    margin-bottom: 30px;
 }

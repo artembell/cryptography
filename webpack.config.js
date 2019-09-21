@@ -28,7 +28,7 @@ module.exports = {
         })
     ],
     resolve: {
-        extensions: ['.jsx', '.js']
+        extensions: ['.js', '.jsx']
     },
     devServer: {
         contentBase: path.join(__dirname, 'dist'),
