@@ -34,6 +34,16 @@ export default class Settings extends React.Component {
 		this.setState({plainText});
 	}
 
+	onPlainTextChange(e){
+		const plainText = e.target.value;
+		this.setState({plainText});
+	}
+
+	onCipherTextChange(e){
+		const cipherText = e.target.value;
+		this.setState({cipherText});
+	}
+
 	render() {
 		return (
 			<Form>
@@ -82,11 +92,21 @@ export default class Settings extends React.Component {
 
 				<Form.Group controlId="exampleForm.ControlTextarea1">
 					<Form.Label>Example textarea1</Form.Label>
-					<Form.Control as="textarea" rows="3" value={this.state.plainText}/>
+					<Form.Control 
+						onChange={(e) => this.onPlainTextChange(e)} 
+						as="textarea"
+						rows="3"
+						value={this.state.plainText}
+					/>
 				</Form.Group>
 				<Form.Group controlId="exampleForm.ControlTextarea2">
 					<Form.Label>Example textarea2</Form.Label>
-					<Form.Control as="textarea" rows="3" value={this.state.cipherText}/>
+					<Form.Control 
+						onChange={(e) => this.onCipherTextChange(e)}
+						as="textarea" 
+						rows="3" 
+						value={this.state.cipherText}
+					/>
 				</Form.Group>
 			</Form>
 		);
