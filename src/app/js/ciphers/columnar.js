@@ -1,8 +1,8 @@
-const encipher = () => {
+const encipher = ({text, key}) => {
     console.log('columnar encipher')
 }
 
-const decipher = () => {
+const decipher = ({text, key}) => {
     console.log('colimnar decipher')
 }
 

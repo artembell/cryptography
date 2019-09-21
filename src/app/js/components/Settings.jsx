@@ -11,13 +11,13 @@ export default class Settings extends React.Component {
 
 		this.state = {
 			currentCipherIndex: 0,
-			plainText: '123',
-			cipherText: 'asd'
+			key: null,
+			plainText: '',
+			cipherText: ''
 		};
 	}
 
 	onCipherChange(e) {
-		
 		const index = this.availableCiphers.findIndex(cipher => {
 			return cipher === e.target.value;
 		});
@@ -25,12 +25,14 @@ export default class Settings extends React.Component {
 	}
 
 	onEncipherClick(e){
-		const cipherText = Ciphers[this.state.currentCipherIndex].encipher(this.state.plainText);
+		const {plainText: text, key} = this.state;
+		const cipherText = Ciphers[this.state.currentCipherIndex].encipher({text, key});
 		this.setState({cipherText});
 	}
 
 	onDecipherClick(e){
-		const plainText = Ciphers[this.state.currentCipherIndex].decipher(this.state.cipherText);
+		const {cipherText: text, key} = this.state;
+		const plainText = Ciphers[this.state.currentCipherIndex].decipher({text, key});
 		this.setState({plainText});
 	}
 
@@ -42,6 +44,11 @@ export default class Settings extends React.Component {
 	onCipherTextChange(e){
 		const cipherText = e.target.value;
 		this.setState({cipherText});
+	}
+
+	onKeyChange(e){
+		const key = e.target.value;
+		this.setState({key});
 	}
 
 	render() {
@@ -77,7 +84,11 @@ export default class Settings extends React.Component {
 				<Row>
 					<Col>
 						<Form.Label>Key</Form.Label>
-						<Form.Control type="text" placeholder="Enter key" />
+						<Form.Control 
+							onChange={(e) => this.onKeyChange(e)} 
+							type="text" 
+							placeholder="Enter key"
+						/>
 						<Form.Text className="text-muted">
 							This key must contain letters only! (or not)
 						</Form.Text>
