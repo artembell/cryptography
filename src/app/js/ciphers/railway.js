@@ -22,7 +22,32 @@ const encipher = ({text, key}) => {
 }
 
 const decipher = ({text, key}) => {
-    console.log('railway decipher')
+    console.log(text, key);
+    let result = new Array(text.length)
+    const start = (key - 1) * 2
+    let index = 0
+
+    for(let i = 0; i < key; i++){
+        let j = i
+        const firstOffset = (start === i * 2) ? start : (start - i * 2)
+        let offset = firstOffset
+        
+        console.log('---', i);
+        while(!!text[j]){
+            console.log(j);
+            result[j] = text[index]
+
+            j += offset
+            offset = offset === start ? start : start - offset
+            
+            index++
+        }
+    }
+
+    result = result.join('')
+    console.log(result);
+    return result
+
 }
 
 const isKeyValid = (key) => {
