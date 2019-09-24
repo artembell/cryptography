@@ -46,13 +46,31 @@ const encipher = ({text, key}) => {
 const decipher = ({text, key}) => {
     console.log(text, key)
 
-    let result = new Array(key.length)
+    let result = new Array(text.length)
     let mappedKey = getMappedKey(key)
+    let curIndex = 0
+    console.log(result)
 
-    text.split('').forEach((letter) => {
-        
-    });
-    return text
+    const integer = Math.floor(text.length / key.length),
+        residue = text.length % key.length,
+        res = text.length / key.length
+
+    console.log(integer, residue, res)
+
+    for(let i = 0; i < key.length; i++){
+        let index = mappedKey.indexOf(i)
+        let amount = index < residue ? Math.ceil(res) : Math.floor(res)
+        console.log(index, amount)
+
+        let offset = 0
+        for(let j = 0; j < amount; j++){
+            result[index + offset] = text[curIndex]
+            offset += key.length
+            curIndex++
+        }
+    }
+    console.log(result)
+    return result.join('')
 }
 
 const isKeyValid = (key) => {
