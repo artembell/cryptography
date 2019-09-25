@@ -59,5 +59,6 @@ export const railway = {
     encipher,
     decipher,
     isKeyValid,
-    keyRequirements: ['Your key must be number from 1 to 10', 'Nice', 'Key']
+    keyRequirements: ['Your key must be number from 1 to 10', 'Nice', 'Key'],
+    alphabet: 'abcdefghijklmnopqrstuvwxyz'
 }

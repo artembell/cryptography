@@ -49,18 +49,18 @@ const decipher = ({text, key}) => {
     let result = new Array(text.length)
     let mappedKey = getMappedKey(key)
     let curIndex = 0
-    console.log(result)
+    // console.log(result)
 
     const integer = Math.floor(text.length / key.length),
         residue = text.length % key.length,
         res = text.length / key.length
 
-    console.log(integer, residue, res)
+    // console.log(integer, residue, res)
 
     for(let i = 0; i < key.length; i++){
         let index = mappedKey.indexOf(i)
         let amount = index < residue ? Math.ceil(res) : Math.floor(res)
-        console.log(index, amount)
+        // console.log(index, amount)
 
         let offset = 0
         for(let j = 0; j < amount; j++){
@@ -69,7 +69,7 @@ const decipher = ({text, key}) => {
             curIndex++
         }
     }
-    console.log(result)
+    // console.log(result)
     return result.join('')
 }
 
@@ -80,5 +80,6 @@ export const columnar = {
     encipher,
     decipher,
     isKeyValid,
-    keyRequirements: ['Your key must contain only letters']
+    keyRequirements: ['Your key must contain only letters'],
+    alphabet: 'abcdefghijklmnopqrstuvwxyz'
 }

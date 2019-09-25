@@ -59,5 +59,6 @@ export const vigenere = {
     encipher,
     decipher,
     isKeyValid,
-    keyRequirements: ['Your key must contain only letters (Vigenere)']
+    keyRequirements: ['Your key must contain only letters (Vigenere)'],
+    alphabet
 }
