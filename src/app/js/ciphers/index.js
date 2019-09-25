@@ -4,7 +4,7 @@ import {vigenere} from './vigenere';
 import CipherNames from '../enums/CipherNames';
 
 const normalizeText = (text, allowed) => {
-    return text.split('').map(letter => {
+    return text.toLowerCase().split('').map(letter => {
         return allowed.includes(letter) ? letter : ''
     }).join('').replace(/\s+/g, '')
 }
