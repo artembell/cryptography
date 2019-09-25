@@ -68,14 +68,32 @@ export default class Settings extends React.Component {
 		this.setState({key});
 	}
 
-	onFileChoose(e) {
-		console.log(remote);
-		let [ file ] = remote.dialog.showOpenDialogSync({ properties: ['openFile'] })  
+	onInputFileChoose() {
+		// console.log(remote);
+		let [ file = '' ] = remote.dialog.showOpenDialogSync({ properties: ['openFile'] })
+		console.log(file);  
 
 		fs.readFile(file, 'utf8', (err, data) => {
 			if (err) throw err;
-			console.log(data);
+			this.setState({plainText: normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet)})
+			console.log(normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet));
 		  });
+	}
+
+	onOutputFileChoose() {
+		// console.log(remote);
+		let [ file = ''] = remote.dialog.showOpenDialogSync({ properties: ['openFile'] })  
+		console.log(file);  
+		fs.readFile(file, 'utf8', (err, data) => {
+			if (err) throw err;
+			this.setState({plainText: normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet)})
+			console.log(normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet));
+		  });
+
+		fs.writeFile(file, this.state.cipherText, 'utf8', function(error){
+			if(error) throw error;
+			console.log('GOOD');
+		});
 	}
 
 	render() {
@@ -134,7 +152,8 @@ export default class Settings extends React.Component {
 						<ButtonToolbar>
 							<Button onClick={(e) => this.onEncipherClick(e)} variant="success" size="lg">Encipher</Button>
 							<Button onClick={(e) => this.onDecipherClick(e)} variant="warning" size="lg">Decipher</Button>
-							<Button onClick={(e) => this.onFileChoose(e)} variant="primary" size="lg">File</Button>
+							<Button onClick={() => this.onInputFileChoose()} variant="primary" size="lg">Input File</Button>
+							<Button onClick={() => this.onOutputFileChoose()} variant="primary" size="lg">Output File</Button>
 						</ButtonToolbar>
 					</Col>
 				</Row>
