@@ -1,7 +1,10 @@
 import React, {Fragment	} from "react";
 import { Form, FormGroup, FormLabel, FormControl, Row, Col, Button, ButtonToolbar } from "react-bootstrap";
-import {Ciphers} from '../ciphers/index';
+import { Ciphers } from '../ciphers/index';
 import CipherNames from '../enums/CipherNames';
+import { remote } from 'electron';
+
+const fs = require('fs')
 
 export default class Settings extends React.Component {
 	constructor(props) {
@@ -10,9 +13,9 @@ export default class Settings extends React.Component {
 		this.availableCiphers = Object.values(CipherNames)
 
 		this.state = {
-			currentCipherIndex: 0,
-			key: '4',
-			plainText: 'CRYPTOGRAPHY',
+			currentCipherIndex: 2,
+			key: '',
+			plainText: '',
 			cipherText: ''
 		};
 	}
@@ -24,29 +27,29 @@ export default class Settings extends React.Component {
 		this.setState({ currentCipherIndex: index });
 	}
 
-	onEncipherClick(e){
+	onEncipherClick(e) {
 		const {plainText: text, key} = this.state;
 		const cipherText = Ciphers[this.state.currentCipherIndex].encipher({text, key});
 		this.setState({cipherText});
 	}
 
-	onDecipherClick(e){
+	onDecipherClick(e) {
 		const {cipherText: text, key} = this.state;
 		const plainText = Ciphers[this.state.currentCipherIndex].decipher({text, key});
 		this.setState({plainText});
 	}
 
-	onPlainTextChange(e){
+	onPlainTextChange(e) {
 		const plainText = e.target.value;
 		this.setState({plainText});
 	}
 
-	onCipherTextChange(e){
+	onCipherTextChange(e) {
 		const cipherText = e.target.value;
 		this.setState({cipherText});
 	}
 
-	onKeyChange(e){
+	onKeyChange(e) {
 		const key = e.target.value;
 		this.setState({key});
 	}
@@ -55,9 +58,21 @@ export default class Settings extends React.Component {
 		return this.state.key === '' && Ciphers[this.state.currentCipherIndex].isKeyValid(this.state.key);
 	}
 
+	onFileChoose(e) {
+		console.log(remote);
+		let [ file ] = remote.dialog.showOpenDialogSync({ properties: ['openFile'] })  
+
+		fs.readFile(file, 'utf8', (err, data) => {
+			if (err) throw err;
+			console.log(data);
+		  });
+	}
+
 	render() {
 		return (
 			<Form>
+				
+
 				<Row>
 					<Col md={4}>
 						<Form.Label>Choose ciphers</Form.Label>
@@ -75,14 +90,19 @@ export default class Settings extends React.Component {
 							})}
 						</Form.Control>
 					</Col>
-					<Col md={4}>
-						<Form.Label>Choose input file</Form.Label>
-						<Form.Control type="file" />
-					</Col>
-					<Col md={4}>
-						<Form.Label>Choose output file</Form.Label>
-						<Form.Control type="file" />
-					</Col>					
+					
+
+					<Row>
+						<Col md={4}>
+							<Form.Label>Choose input file</Form.Label>
+							<Form.Control type="file"/>
+						</Col>
+						<Col md={4}>
+							<Form.Label>Choose output file</Form.Label>
+							<Form.Control type="file" />
+						</Col>
+						<h1>{this.state.text}</h1>
+					</Row>					
 				</Row>
 
 				<Row>
@@ -104,6 +124,7 @@ export default class Settings extends React.Component {
 						<ButtonToolbar>
 							<Button disabled={this.isKeyValid()} onClick={(e) => this.onEncipherClick(e)} variant="success" size="lg">Encipher</Button>
 							<Button disabled={this.isKeyValid()} onClick={(e) => this.onDecipherClick(e)} variant="warning" size="lg">Decipher</Button>
+							<Button onClick={(e) => this.onFileChoose(e)} variant="primary" size="lg">File</Button>
 						</ButtonToolbar>
 					</Col>
 				</Row>
