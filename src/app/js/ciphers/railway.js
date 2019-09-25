@@ -5,6 +5,10 @@ const encipher = ({text, key: strKey}) => {
         start = (key - 1) * 2
     let result = '';
 
+    if(key === 1 || text.length <= key.length){
+        return text
+    }
+
     for(let i = 0; i < key; i++){
         let j = i
         const firstOffset = (start === i * 2) ? start : (start - i * 2)
