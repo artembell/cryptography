@@ -10,10 +10,10 @@ const getMappedKey  = (text, key) => {
 }
 
 const encipher = ({text, key}) => {
-    console.log(text, key)
+    // console.log(text, key)
 
     let res = getMappedKey(text, key)
-    console.log(res)
+    // console.log(res)
 
     let result = ''
 
@@ -22,20 +22,20 @@ const encipher = ({text, key}) => {
         let keyLetterIndex = alphabet.indexOf(res[index])
 
         let target = (letterIndex + keyLetterIndex) % alphabet.length
-        console.log('---', target)
+        // console.log('---', target)
         result += alphabet[target]
 
-        console.log(letterIndex, keyLetterIndex)
+        // console.log(letterIndex, keyLetterIndex)
     });
 
     return result
 }
 
 const decipher = ({text, key}) => {
-    console.log(text, key)
+    // console.log(text, key)
 
     let res = getMappedKey(text, key)
-    console.log(res)
+    // console.log(res)
 
     let result = ''
     text.split('').forEach((letter, index) => {
@@ -45,20 +45,22 @@ const decipher = ({text, key}) => {
         let target = (alphabet.length + letterIndex - keyLetterIndex) % alphabet.length
         result += alphabet[target]
 
-        console.log(letterIndex, keyLetterIndex)
+        // console.log(letterIndex, keyLetterIndex)
     });
 
     return result
 }
 
-const isKeyValid = () => {
-    return true
+const formKey = (key) => {
+    return key.split('').reduce((res, letter, index) => {
+        return alphabet.includes(letter) ? res + letter : res
+    }, '')
 }
 
 export const vigenere = {
     encipher,
     decipher,
-    isKeyValid,
-    keyRequirements: ['Your key must contain only letters (Vigenere)'],
+    formKey,
+    keyRequirements: [`Your key should consist only of letters: ${alphabet}`],
     alphabet
 }

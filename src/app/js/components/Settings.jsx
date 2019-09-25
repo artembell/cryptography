@@ -1,5 +1,5 @@
 import React, {Fragment	} from "react";
-import { Form, FormGroup, FormLabel, FormControl, Row, Col, Button, ButtonToolbar } from "react-bootstrap";
+import { Form, FormGroup, FormLabel, FormControl, Row, Col, Button, ButtonToolbar, InputGroup } from "react-bootstrap";
 import { Ciphers, normalizeText } from '../ciphers/index';
 import CipherNames from '../enums/CipherNames';
 import { remote } from 'electron';
@@ -16,7 +16,9 @@ export default class Settings extends React.Component {
 			currentCipherIndex: 0,
 			key: 'keyshit',
 			plainText: '',
-			cipherText: ''
+			cipherText: '',
+			inputFilePath: '',
+			outputFilePath: ''
 		};
 	}
 
@@ -30,9 +32,19 @@ export default class Settings extends React.Component {
 	onEncipherClick(e) {
 		const {plainText: text, key} = this.state,
 			chosenCipher = Ciphers[this.state.currentCipherIndex],
-			cipherText = chosenCipher.encipher({text: normalizeText(text, chosenCipher.alphabet), key})
+			formedKey = chosenCipher.formKey(key)
+		
+		console.log(formedKey);
+		if(formedKey && text){
+			const cipherText = chosenCipher.encipher({
+				text: normalizeText(text, chosenCipher.alphabet),
+				key: formedKey
+			})
 
-		this.setState({cipherText});
+			this.setState({cipherText});
+		}else{
+			console.log('CANT ENCIPHER WITHOUT KEY OR TEXT');
+		}
 	}
 
 	onDecipherClick(e) {
@@ -58,21 +70,41 @@ export default class Settings extends React.Component {
 		this.setState({key});
 	}
 
-	isKeyValid(){
-		return this.state.key === '' && Ciphers[this.state.currentCipherIndex].isKeyValid(this.state.key);
-	}
-
-	onFileChoose(e) {
-		console.log(remote);
-		let [ file ] = remote.dialog.showOpenDialogSync({ properties: ['openFile'] })  
+	onInputFileChoose() {
+		// console.log(remote);
+		let [ file = '' ] = remote.dialog.showOpenDialogSync({ properties: ['openFile'] })
+		console.log(file);  
+		this.setState({inputFilePath: file})
 
 		fs.readFile(file, 'utf8', (err, data) => {
 			if (err) throw err;
-			console.log(data);
+			this.setState({plainText: normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet)})
+			console.log(normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet));
 		  });
 	}
 
+	onOutputFileChoose() {
+		// console.log(remote);
+		let [ file = ''] = remote.dialog.showOpenDialogSync({ properties: ['openFile'] })  
+		console.log(file);  
+		this.setState({outputFilePath: file})
+
+		fs.readFile(file, 'utf8', (err, data) => {
+			if (err) throw err;
+			this.setState({plainText: normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet)})
+			console.log(normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet));
+		  });
+
+		fs.writeFile(file, this.state.cipherText, 'utf8', function(error){
+			if(error) throw error;
+			console.log('GOOD');
+		});
+	}
+
 	render() {
+		const {cipherText, outputFilePath} = this.state,
+			isSaveDisabled = !cipherText || !outputFilePath
+		console.log(cipherText === '', outputFilePath === '');
 		return (
 			<Form>
 				
@@ -93,23 +125,8 @@ export default class Settings extends React.Component {
 								);
 							})}
 						</Form.Control>
-					</Col>
-					
+					</Col>	
 
-					<Row>
-						<Col md={4}>
-							<Form.Label>Choose input file</Form.Label>
-							<Form.Control type="file"/>
-						</Col>
-						<Col md={4}>
-							<Form.Label>Choose output file</Form.Label>
-							<Form.Control type="file" />
-						</Col>
-						<h1>{this.state.text}</h1>
-					</Row>					
-				</Row>
-
-				<Row>
 					<Col>
 						<Form.Label>Key</Form.Label>
 						<Form.Control 
@@ -123,35 +140,69 @@ export default class Settings extends React.Component {
 								return <Fragment key={index}>{requirement}<br/></Fragment>
 							})}
 						</Form.Text>
-					</Col>
+					</Col>			
+				</Row>
+
+				<Row>
 					<Col>
+						<InputGroup className="mb-3">
+							<InputGroup.Prepend>
+								<Button onClick={() => this.onInputFileChoose()}
+									variant="outline-primary">Input file</Button>
+							</InputGroup.Prepend>
+							<FormControl readOnly aria-describedby="basic-addon1" value={this.state.inputFilePath} />
+						</InputGroup>
+
+						<Form.Group controlId="exampleForm.ControlTextarea1">
+							<Form.Control 
+								// readOnly
+								onChange={(e) => this.onPlainTextChange(e)} 
+								as="textarea"
+								rows="3"
+								placeholder="Plaintext"
+								value={this.state.plainText}
+							/>
+						</Form.Group>
+					</Col>
+				</Row>
+
+				<Row className="justify-content-md-center">
+					<Col md={'auto'}>
 						<ButtonToolbar>
-							<Button disabled={this.isKeyValid()} onClick={(e) => this.onEncipherClick(e)} variant="success" size="lg">Encipher</Button>
-							<Button disabled={this.isKeyValid()} onClick={(e) => this.onDecipherClick(e)} variant="warning" size="lg">Decipher</Button>
-							<Button onClick={(e) => this.onFileChoose(e)} variant="primary" size="lg">File</Button>
+							<Button onClick={(e) => this.onEncipherClick(e)} variant="success" size="lg">Encipher</Button>
+						</ButtonToolbar>
+					</Col>
+					<Col md={'auto'}>
+						<ButtonToolbar>
+							<Button onClick={(e) => this.onDecipherClick(e)} variant="warning" size="lg">Decipher</Button>
 						</ButtonToolbar>
 					</Col>
 				</Row>
 
-				<Form.Group controlId="exampleForm.ControlTextarea1">
-					<Form.Label>Plaintext</Form.Label>
-					<Form.Control 
-						onChange={(e) => this.onPlainTextChange(e)} 
-						as="textarea"
-						rows="3"
-						placeholder="Plaintext "
-						value={this.state.plainText}
-					/>
-				</Form.Group>
-				<Form.Group controlId="exampleForm.ControlTextarea2">
-					<Form.Label>Example textarea2</Form.Label>
-					<Form.Control 
-						onChange={(e) => this.onCipherTextChange(e)}
-						as="textarea" 
-						rows="3" 
-						value={this.state.cipherText}
-					/>
-				</Form.Group>
+				<Row>
+					<Col>
+						<InputGroup className="mb-3">
+							<InputGroup.Prepend>
+								<Button onClick={() => this.onOutputFileChoose()}
+									variant="outline-primary">Output file</Button>
+								<Button disabled={isSaveDisabled} 
+									variant="outline-success">Save</Button>
+							</InputGroup.Prepend>
+							<FormControl readOnly aria-describedby="basic-addon1" value={this.state.outputFilePath} />
+						</InputGroup>
+
+						<Form.Group controlId="exampleForm.ControlTextarea2">
+							<Form.Control 
+								// readOnly
+								onChange={(e) => this.onCipherTextChange(e)}
+								as="textarea" 
+								rows="3" 
+								placeholder="Ciphertext"
+								value={this.state.cipherText}
+							/>
+						</Form.Group>
+					</Col>
+				</Row>		
 			</Form>
 		);
 	}
