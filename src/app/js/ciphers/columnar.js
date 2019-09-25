@@ -14,9 +14,6 @@ const getMappedKey = (key) => {
     return splitedKey
 }
 
-const getNormalizedText = (text) => {
-    return text
-}
 
 const encipher = ({text, key}) => {
     // console.log(text, key)
@@ -83,6 +80,6 @@ export const columnar = {
     encipher,
     decipher,
     formKey,
-    keyRequirements: ['Your key must contain only letters'],
-    alphabet: 'abcdefghijklmnopqrstuvwxyz'
+    keyRequirements: [[`Your key should consist only of letters: ${alphabet}`]],
+    alphabet
 }

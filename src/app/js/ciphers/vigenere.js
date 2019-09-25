@@ -61,6 +61,6 @@ export const vigenere = {
     encipher,
     decipher,
     formKey,
-    keyRequirements: ['Your key must contain only letters (Vigenere)'],
+    keyRequirements: [`Your key should consist only of letters: ${alphabet}`],
     alphabet
 }
