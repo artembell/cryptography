@@ -30,9 +30,19 @@ export default class Settings extends React.Component {
 	onEncipherClick(e) {
 		const {plainText: text, key} = this.state,
 			chosenCipher = Ciphers[this.state.currentCipherIndex],
-			cipherText = chosenCipher.encipher({text: normalizeText(text, chosenCipher.alphabet), key})
+			formedKey = chosenCipher.formKey(key)
+		
+		console.log(formedKey);
+		if(formedKey && text){
+			const cipherText = chosenCipher.encipher({
+				text: normalizeText(text, chosenCipher.alphabet),
+				key: formedKey
+			})
 
-		this.setState({cipherText});
+			this.setState({cipherText});
+		}else{
+			console.log('CANT ENCIPHER WITHOUT KEY OR TEXT');
+		}
 	}
 
 	onDecipherClick(e) {
@@ -56,10 +66,6 @@ export default class Settings extends React.Component {
 	onKeyChange(e) {
 		const key = e.target.value;
 		this.setState({key});
-	}
-
-	isKeyValid(){
-		return this.state.key === '' && Ciphers[this.state.currentCipherIndex].isKeyValid(this.state.key);
 	}
 
 	onFileChoose(e) {
@@ -126,8 +132,8 @@ export default class Settings extends React.Component {
 					</Col>
 					<Col>
 						<ButtonToolbar>
-							<Button disabled={this.isKeyValid()} onClick={(e) => this.onEncipherClick(e)} variant="success" size="lg">Encipher</Button>
-							<Button disabled={this.isKeyValid()} onClick={(e) => this.onDecipherClick(e)} variant="warning" size="lg">Decipher</Button>
+							<Button onClick={(e) => this.onEncipherClick(e)} variant="success" size="lg">Encipher</Button>
+							<Button onClick={(e) => this.onDecipherClick(e)} variant="warning" size="lg">Decipher</Button>
 							<Button onClick={(e) => this.onFileChoose(e)} variant="primary" size="lg">File</Button>
 						</ButtonToolbar>
 					</Col>
@@ -144,7 +150,7 @@ export default class Settings extends React.Component {
 					/>
 				</Form.Group>
 				<Form.Group controlId="exampleForm.ControlTextarea2">
-					<Form.Label>Example textarea2</Form.Label>
+					<Form.Label>Ciphertext</Form.Label>
 					<Form.Control 
 						onChange={(e) => this.onCipherTextChange(e)}
 						as="textarea" 
