@@ -19,13 +19,13 @@ const getNormalizedText = (text) => {
 }
 
 const encipher = ({text, key}) => {
-    console.log(text, key)
+    // console.log(text, key)
 
     // let text = getNormalizedText(text)
 
     let mappedKey = getMappedKey(key)
 
-    console.log(mappedKey)
+    // console.log(mappedKey)
 
     let result = ''
     const len = mappedKey.length
@@ -39,7 +39,7 @@ const encipher = ({text, key}) => {
         }
     }
 
-    console.log(result)
+    // console.log(result)
     return result 
 }
 
@@ -73,13 +73,16 @@ const decipher = ({text, key}) => {
     return result.join('')
 }
 
-const isKeyValid = (key) => {
-    return true
+const formKey = (key) => {
+    return key.split('').reduce((res, letter, index) => {
+        return alphabet.includes(letter) ? res + letter : res
+    }, '')
 }
+
 export const columnar = {
     encipher,
     decipher,
-    isKeyValid,
+    formKey,
     keyRequirements: ['Your key must contain only letters'],
     alphabet: 'abcdefghijklmnopqrstuvwxyz'
 }

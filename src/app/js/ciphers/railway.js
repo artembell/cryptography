@@ -1,4 +1,6 @@
-const encipher = ({text, key}) => {
+const encipher = ({text, key: strKey}) => {
+    
+    const key = +strKey
     console.log(text, key);
     const start = (key - 1) * 2
     let result = '';
@@ -8,21 +10,21 @@ const encipher = ({text, key}) => {
         const firstOffset = (start === i * 2) ? start : (start - i * 2)
         let offset = firstOffset
         
-        console.log('---', i);
+        // console.log('---', i);
         while(!!text[j]){
-            console.log(j);
+            // console.log(j);
             result += text[j]
             j += offset
             offset = offset === start ? start : start - offset
         }
     }
 
-    console.log(result)
+    // console.log(result)
     return result
 }
 
 const decipher = ({text, key}) => {
-    console.log(text, key);
+    // console.log(text, key);
     let result = new Array(text.length)
     const start = (key - 1) * 2
     let index = 0
@@ -32,9 +34,9 @@ const decipher = ({text, key}) => {
         const firstOffset = (start === i * 2) ? start : (start - i * 2)
         let offset = firstOffset
         
-        console.log('---', i);
+        // console.log('---', i);
         while(!!text[j]){
-            console.log(j);
+            // console.log(j);
             result[j] = text[index]
 
             j += offset
@@ -45,20 +47,21 @@ const decipher = ({text, key}) => {
     }
 
     result = result.join('')
-    console.log(result);
+    // console.log(result);
     return result
 
 }
 
-const isKeyValid = (key) => {
-    return true
+const formKey = (key) => {
+    const matches = key.match(/\d+/) 
+    return matches ? matches[0] : matches 
 }
 
 
 export const railway = {
     encipher,
     decipher,
-    isKeyValid,
+    formKey,
     keyRequirements: ['Your key must be number from 1 to 10', 'Nice', 'Key'],
     alphabet: 'abcdefghijklmnopqrstuvwxyz'
 }
