@@ -3,7 +3,7 @@ import {columnar} from './columnar';
 import {vigenere} from './vigenere';
 import CipherNames from '../enums/CipherNames';
 
-const normalizeText = (text, allowed) => {
+const normalize = (text, allowed) => {
     return text.toLowerCase().split('').map(letter => {
         return allowed.includes(letter) ? letter : ''
     }).join('').replace(/\s+/g, '')
@@ -12,3 +12,4 @@ const normalizeText = (text, allowed) => {
 export const Ciphers = [
     railway, columnar, vigenere, normalizeText
 ]
+export const normalizeText = normalize; 

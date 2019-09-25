@@ -1,6 +1,6 @@
 import React, {Fragment	} from "react";
 import { Form, FormGroup, FormLabel, FormControl, Row, Col, Button, ButtonToolbar } from "react-bootstrap";
-import { Ciphers } from '../ciphers/index';
+import { Ciphers, normalizeText } from '../ciphers/index';
 import CipherNames from '../enums/CipherNames';
 import { remote } from 'electron';
 
@@ -13,8 +13,8 @@ export default class Settings extends React.Component {
 		this.availableCiphers = Object.values(CipherNames)
 
 		this.state = {
-			currentCipherIndex: 2,
-			key: '',
+			currentCipherIndex: 0,
+			key: 'keyshit',
 			plainText: '',
 			cipherText: ''
 		};
@@ -28,14 +28,18 @@ export default class Settings extends React.Component {
 	}
 
 	onEncipherClick(e) {
-		const {plainText: text, key} = this.state;
-		const cipherText = Ciphers[this.state.currentCipherIndex].encipher({text, key});
+		const {plainText: text, key} = this.state,
+			chosenCipher = Ciphers[this.state.currentCipherIndex],
+			cipherText = chosenCipher.encipher({text: normalizeText(text, chosenCipher.alphabet), key})
+
 		this.setState({cipherText});
 	}
 
 	onDecipherClick(e) {
-		const {cipherText: text, key} = this.state;
-		const plainText = Ciphers[this.state.currentCipherIndex].decipher({text, key});
+		const {cipherText: text, key} = this.state,
+			chosenCipher = Ciphers[this.state.currentCipherIndex],
+			plainText = chosenCipher.decipher({text: normalizeText(text, chosenCipher.alphabet), key})
+			
 		this.setState({plainText});
 	}
 
