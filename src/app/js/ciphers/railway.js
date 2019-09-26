@@ -32,7 +32,6 @@ const decipher = ({text, key: strKey}) => {
     let result = new Array(text.length),
         index = 0
 
-    console.log(text, key)
     if(key === 1 || text.length <= key.length){
         return text
     } else if (key === 0) {
