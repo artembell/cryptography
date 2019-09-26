@@ -4,6 +4,8 @@ import { Ciphers, normalizeText } from '../ciphers/index';
 import CipherNames from '../enums/CipherNames';
 import { remote } from 'electron';
 
+import Enigma from '../ciphers/Enigma'
+
 const fs = require('fs')
 
 export default class Settings extends React.Component {
@@ -14,7 +16,7 @@ export default class Settings extends React.Component {
 
 		this.state = {
 			currentCipherIndex: 0,
-			key: 'keyshit',
+			key: 'key3sh2кл1юitчик',
 			plainText: '',
 			cipherText: '',
 			inputFilePath: '',
@@ -26,33 +28,32 @@ export default class Settings extends React.Component {
 		const index = this.availableCiphers.findIndex(cipher => {
 			return cipher === e.target.value;
 		});
+		Enigma.cipher = index
 		this.setState({ currentCipherIndex: index });
 	}
 
-	onEncipherClick(e) {
-		const {plainText: text, key} = this.state,
-			chosenCipher = Ciphers[this.state.currentCipherIndex],
-			formedKey = chosenCipher.formKey(key)
-		
-		console.log(formedKey);
-		if(formedKey && text){
-			const cipherText = chosenCipher.encipher({
-				text: normalizeText(text, chosenCipher.alphabet),
-				key: formedKey
-			})
+	onEncipherClick() {
+		const {plainText: text, key} = this.state
 
+		const cipherText = Enigma.encipher({text, key}) 
+
+		if (cipherText) {
 			this.setState({cipherText});
-		}else{
+		} else {
 			console.log('CANT ENCIPHER WITHOUT KEY OR TEXT');
 		}
 	}
 
-	onDecipherClick(e) {
-		const {cipherText: text, key} = this.state,
-			chosenCipher = Ciphers[this.state.currentCipherIndex],
-			plainText = chosenCipher.decipher({text: normalizeText(text, chosenCipher.alphabet), key})
-			
-		this.setState({plainText});
+	onDecipherClick() {
+		const {cipherText: text, key} = this.state
+
+		const plainText = Enigma.decipher({text, key}) 
+		console.log(plainText, '-');
+		if (plainText) {
+			this.setState({plainText});
+		} else {
+			console.log('CANT DECIPHER WITHOUT KEY OR TEXT');
+		}
 	}
 
 	onPlainTextChange(e) {
@@ -62,6 +63,7 @@ export default class Settings extends React.Component {
 
 	onCipherTextChange(e) {
 		const cipherText = e.target.value;
+		// console.log(cipherText);
 		this.setState({cipherText});
 	}
 
@@ -78,37 +80,60 @@ export default class Settings extends React.Component {
 
 		fs.readFile(file, 'utf8', (err, data) => {
 			if (err) throw err;
+			console.log(normalizeText(data, Enigma.alphabet));
 			this.setState({plainText: normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet)})
-			console.log(normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet));
+			// console.log(normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet));
 		  });
 	}
 
 	onOutputFileChoose() {
 		// console.log(remote);
-		let [ file = ''] = remote.dialog.showOpenDialogSync({ properties: ['openFile'] })  
+		let result = remote.dialog.showOpenDialogSync({ properties: ['openFile'] })  
+		console.log(result);
+		let file = result ? result[0] : ''
+		// let [ file = ''] = remote.dialog.showOpenDialogSync({ properties: ['openFile'] })  
 		console.log(file);  
 		this.setState({outputFilePath: file})
 
-		fs.readFile(file, 'utf8', (err, data) => {
-			if (err) throw err;
-			this.setState({plainText: normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet)})
-			console.log(normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet));
-		  });
+		try{
+			fs.readFile(file, 'utf8', (err, data) => {
+				if (err) throw err;
+				this.setState({cipherText: Enigma.normalizeText(data, Enigma.alphabet)})
+			});
+		} catch(error) {
+			console.log(error)
+		}
 
-		fs.writeFile(file, this.state.cipherText, 'utf8', function(error){
-			if(error) throw error;
-			console.log('GOOD');
-		});
+		// fs.writeFile(file, this.state.cipherText, 'utf8', function(error){
+		// 	if(error) throw error;
+		// 	console.log('GOOD');
+		// });
+	}
+	writeFile(path, data) {
+		try {
+			fs.writeFile(path, data, 'utf8', function(err){
+				if(err) throw err
+			});
+		} catch(error) {
+			console.log(error)
+		}
+	}
+
+	onOutputSave() {
+		const {outputFilePath, cipherText} = this.state
+		this.writeFile(outputFilePath, cipherText)
+	}
+
+	onInputSave() {
+		const {inputFilePath, plainText} = this.state
+		this.writeFile(inputFilePath, plainText) 
 	}
 
 	render() {
-		const {cipherText, outputFilePath} = this.state,
-			isSaveDisabled = !cipherText || !outputFilePath
+		const {cipherText, outputFilePath} = this.state
 		console.log(cipherText === '', outputFilePath === '');
 		return (
 			<Form>
-				
-
 				<Row>
 					<Col md={4}>
 						<Form.Label>Choose ciphers</Form.Label>
@@ -149,6 +174,9 @@ export default class Settings extends React.Component {
 							<InputGroup.Prepend>
 								<Button onClick={() => this.onInputFileChoose()}
 									variant="outline-primary">Input file</Button>
+								<Button onClick={() => this.onInputSave()}
+									disabled={this.state.inputFilePath == ''} 
+									variant="outline-success">Save</Button>
 							</InputGroup.Prepend>
 							<FormControl readOnly aria-describedby="basic-addon1" value={this.state.inputFilePath} />
 						</InputGroup>
@@ -169,12 +197,12 @@ export default class Settings extends React.Component {
 				<Row className="justify-content-md-center">
 					<Col md={'auto'}>
 						<ButtonToolbar>
-							<Button onClick={(e) => this.onEncipherClick(e)} variant="success" size="lg">Encipher</Button>
+							<Button onClick={() => this.onEncipherClick()} variant="success" size="lg">Encipher</Button>
 						</ButtonToolbar>
 					</Col>
 					<Col md={'auto'}>
 						<ButtonToolbar>
-							<Button onClick={(e) => this.onDecipherClick(e)} variant="warning" size="lg">Decipher</Button>
+							<Button onClick={() => this.onDecipherClick()} variant="warning" size="lg">Decipher</Button>
 						</ButtonToolbar>
 					</Col>
 				</Row>
@@ -185,7 +213,8 @@ export default class Settings extends React.Component {
 							<InputGroup.Prepend>
 								<Button onClick={() => this.onOutputFileChoose()}
 									variant="outline-primary">Output file</Button>
-								<Button disabled={isSaveDisabled} 
+								<Button onClick={() => this.onOutputSave()}
+									disabled={this.state.outputFilePath == ''} 
 									variant="outline-success">Save</Button>
 							</InputGroup.Prepend>
 							<FormControl readOnly aria-describedby="basic-addon1" value={this.state.outputFilePath} />
