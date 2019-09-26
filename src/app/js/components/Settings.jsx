@@ -15,27 +15,25 @@ export default class Settings extends React.Component {
 		this.availableCiphers = Object.values(CipherNames)
 
 		this.state = {
-			currentCipherIndex: 0,
 			key: 'key3sh2кл1юitчик',
 			plainText: '',
 			cipherText: '',
 			inputFilePath: '',
 			outputFilePath: ''
-		};
+		}
 	}
 
 	onCipherChange(e) {
 		const index = this.availableCiphers.findIndex(cipher => {
-			return cipher === e.target.value;
+			return cipher === e.target.value
 		});
 		Enigma.cipher = index
-		this.setState({ currentCipherIndex: index });
+		this.forceUpdate()
 	}
 
 	onEncipherClick() {
-		const {plainText: text, key} = this.state
-
-		const cipherText = Enigma.encipher({text, key}) 
+		const {plainText: text, key} = this.state,
+			cipherText = Enigma.encipher({text, key}) 
 
 		if (cipherText) {
 			this.setState({cipherText});
@@ -45,10 +43,9 @@ export default class Settings extends React.Component {
 	}
 
 	onDecipherClick() {
-		const {cipherText: text, key} = this.state
+		const {cipherText: text, key} = this.state,
+			plainText = Enigma.decipher({text, key}) 
 
-		const plainText = Enigma.decipher({text, key}) 
-		console.log(plainText, '-');
 		if (plainText) {
 			this.setState({plainText});
 		} else {
@@ -80,8 +77,8 @@ export default class Settings extends React.Component {
 
 		fs.readFile(file, 'utf8', (err, data) => {
 			if (err) throw err;
-			console.log(normalizeText(data, Enigma.alphabet));
-			this.setState({plainText: normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet)})
+			console.log(normalizeText(data, Enigma.current.alphabet));
+			this.setState({plainText: normalizeText(data, Enigma.current.alphabet)})
 			// console.log(normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet));
 		  });
 	}
@@ -98,7 +95,7 @@ export default class Settings extends React.Component {
 		try{
 			fs.readFile(file, 'utf8', (err, data) => {
 				if (err) throw err;
-				this.setState({cipherText: Enigma.normalizeText(data, Enigma.alphabet)})
+				this.setState({cipherText: Enigma.normalizeText(data, Enigma.current.alphabet)})
 			});
 		} catch(error) {
 			console.log(error)
@@ -131,7 +128,7 @@ export default class Settings extends React.Component {
 
 	render() {
 		const {cipherText, outputFilePath} = this.state
-		console.log(cipherText === '', outputFilePath === '');
+		console.log(Enigma.currentIndex);
 		return (
 			<Form>
 				<Row>
@@ -139,7 +136,7 @@ export default class Settings extends React.Component {
 						<Form.Label>Choose ciphers</Form.Label>
 						<Form.Control
 							onChange={e => this.onCipherChange(e)}
-							value={this.availableCiphers[this.state.currentCipherIndex]}
+							value={this.availableCiphers[Enigma.currentIndex]}
 							as="select"
 						>
 							{this.availableCiphers.map((cipher, index) => {
@@ -161,7 +158,7 @@ export default class Settings extends React.Component {
 							value={this.state.key}
 						/>
 						<Form.Text className="text-muted">
-							{Ciphers[this.state.currentCipherIndex].keyRequirements.map((requirement, index) => {
+							{Enigma.current.keyRequirements.map((requirement, index) => {
 								return <Fragment key={index}>{requirement}<br/></Fragment>
 							})}
 						</Form.Text>
