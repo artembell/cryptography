@@ -7,6 +7,8 @@ const encipher = ({text, key: strKey}) => {
 
     if(key === 1 || text.length <= key.length){
         return text
+    } else if (key === 0) {
+        return null
     }
 
     for(let i = 0; i < key; i++){
@@ -24,10 +26,18 @@ const encipher = ({text, key: strKey}) => {
     return result
 }
 
-const decipher = ({text, key}) => {
-    const start = (key - 1) * 2
+const decipher = ({text, key: strKey}) => {
+    const key = +strKey,
+        start = (key - 1) * 2
     let result = new Array(text.length),
         index = 0
+
+    console.log(text, key)
+    if(key === 1 || text.length <= key.length){
+        return text
+    } else if (key === 0) {
+        return null
+    }
 
     for(let i = 0; i < key; i++){
         let j = i
