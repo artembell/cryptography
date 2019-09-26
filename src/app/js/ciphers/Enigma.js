@@ -13,11 +13,22 @@ class Enigma {
         }).join('').replace(/\s+/g, '')
     }
 
+    get current() {
+        return Ciphers[this.currentCipherIndex]
+    }
+
+    get currentIndex() {
+        return this.currentCipherIndex
+    }
+
+    get alphabet() { 
+        return Ciphers[this.currentCipherIndex].alphabet
+    }
+
     /**
      * @param {number} newCipherIndex
      */
     set cipher(newCipherIndex) {
-        console.log(newCipherIndex)
         this.currentCipherIndex = newCipherIndex
     }
 
@@ -29,6 +40,7 @@ class Enigma {
         const normalizedText = this.normalizeText(text),
             normalizedKey = this.normalizeKey(key)
 
+        // console.log(normalizedText, normalizedKey)
         if (normalizedKey && normalizedText) {
             return Ciphers[this.currentCipherIndex].encipher({text: normalizedText, key: normalizedKey})
         }
@@ -39,8 +51,8 @@ class Enigma {
     decipher({text, key}) {
         const normalizedText = this.normalizeText(text),
             normalizedKey = this.normalizeKey(key)
-
-        console.log(normalizedText, normalizedKey)
+    
+        // console.log(normalizedText, normalizedKey)
         if (normalizedKey && normalizedText) {
             return Ciphers[this.currentCipherIndex].decipher({text: normalizedText, key: normalizedKey})
         }
