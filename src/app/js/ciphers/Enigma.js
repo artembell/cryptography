@@ -5,7 +5,7 @@ class Enigma {
         this.currentCipherIndex = 0
     }
 
-    normalize(text) {
+    normalizeText(text) {
         const allowed = Ciphers[this.currentCipherIndex].alphabet
 
         return text.toLowerCase().split('').map(letter => {
@@ -21,17 +21,31 @@ class Enigma {
         this.currentCipherIndex = newCipherIndex
     }
 
-    formkKey(text) {
-        return text
+    normalizeKey(key) {
+        return Ciphers[this.currentCipherIndex].formKey(key)
     }
 
     encipher({text, key}) {
-        console.log(this.normalize(text))
-        return text 
+        const normalizedText = this.normalizeText(text),
+            normalizedKey = this.normalizeKey(key)
+
+        if (normalizedKey && normalizedText) {
+            return Ciphers[this.currentCipherIndex].encipher({text: normalizedText, key: normalizedKey})
+        }
+
+        return null
     }
 
     decipher({text, key}) {
-        return text
+        const normalizedText = this.normalizeText(text),
+            normalizedKey = this.normalizeKey(key)
+
+        console.log(normalizedText, normalizedKey)
+        if (normalizedKey && normalizedText) {
+            return Ciphers[this.currentCipherIndex].decipher({text: normalizedText, key: normalizedKey})
+        }
+        
+        return null
     }
 }
 
