@@ -40,7 +40,6 @@ class Enigma {
         const normalizedText = this.normalizeText(text),
             normalizedKey = this.normalizeKey(key)
 
-        // console.log(normalizedText, normalizedKey)
         if (normalizedKey && normalizedText) {
             return Ciphers[this.currentCipherIndex].encipher({text: normalizedText, key: normalizedKey})
         }
@@ -52,7 +51,6 @@ class Enigma {
         const normalizedText = this.normalizeText(text),
             normalizedKey = this.normalizeKey(key)
     
-        // console.log(normalizedText, normalizedKey)
         if (normalizedKey && normalizedText) {
             return Ciphers[this.currentCipherIndex].decipher({text: normalizedText, key: normalizedKey})
         }

@@ -1,4 +1,5 @@
 const alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
+
 const getMappedKey  = (text, key) => {
     let res = ''
     for(let i = 0; i < Math.floor(text.length / key.length); i++){
@@ -10,11 +11,8 @@ const getMappedKey  = (text, key) => {
 }
 
 const encipher = ({text, key}) => {
-    // console.log(text, key)
 
     let res = getMappedKey(text, key)
-    // console.log(res)
-
     let result = ''
 
     text.split('').forEach((letter, index) => {
@@ -22,20 +20,16 @@ const encipher = ({text, key}) => {
         let keyLetterIndex = alphabet.indexOf(res[index])
 
         let target = (letterIndex + keyLetterIndex) % alphabet.length
-        // console.log('---', target)
         result += alphabet[target]
 
-        // console.log(letterIndex, keyLetterIndex)
     });
 
     return result
 }
 
 const decipher = ({text, key}) => {
-    // console.log(text, key)
 
     let res = getMappedKey(text, key)
-    // console.log(res)
 
     let result = ''
     text.split('').forEach((letter, index) => {
@@ -45,14 +39,13 @@ const decipher = ({text, key}) => {
         let target = (alphabet.length + letterIndex - keyLetterIndex) % alphabet.length
         result += alphabet[target]
 
-        // console.log(letterIndex, keyLetterIndex)
     });
 
     return result
 }
 
 const formKey = (key) => {
-    return key.split('').reduce((res, letter, index) => {
+    return key.toLowerCase().split('').reduce((res, letter, index) => {
         return alphabet.includes(letter) ? res + letter : res
     }, '')
 }
