@@ -15,7 +15,7 @@ export default class Settings extends React.Component {
 		this.availableCiphers = Object.values(CipherNames)
 
 		this.state = {
-			key: 'key3sh2кл1юitчик',
+			key: 'ЛеС98347590127545asdfakjsdljf',
 			plainText: '',
 			cipherText: '',
 			inputFilePath: '',
@@ -44,8 +44,8 @@ export default class Settings extends React.Component {
 
 	onDecipherClick() {
 		const {cipherText: text, key} = this.state,
-			plainText = Enigma.decipher({text, key}) 
-
+			plainText = Enigma.decipher({text, key})
+		
 		if (plainText) {
 			this.setState({plainText});
 		} else {
@@ -71,14 +71,17 @@ export default class Settings extends React.Component {
 
 	onInputFileChoose() {
 		// console.log(remote);
-		let [ file = '' ] = remote.dialog.showOpenDialogSync({ properties: ['openFile'] })
+		let result = remote.dialog.showOpenDialogSync({ properties: ['openFile'] })  
+		console.log(result);
+		let file = result ? result[0] : ''
+		// let [ file = '' ] = remote.dialog.showOpenDialogSync({ properties: ['openFile'] })
 		console.log(file);  
 		this.setState({inputFilePath: file})
 
 		fs.readFile(file, 'utf8', (err, data) => {
 			if (err) throw err;
 			console.log(normalizeText(data, Enigma.current.alphabet));
-			this.setState({plainText: normalizeText(data, Enigma.current.alphabet)})
+			this.setState({plainText: data})
 			// console.log(normalizeText(data, Ciphers[this.state.currentCipherIndex].alphabet));
 		  });
 	}
@@ -95,7 +98,7 @@ export default class Settings extends React.Component {
 		try{
 			fs.readFile(file, 'utf8', (err, data) => {
 				if (err) throw err;
-				this.setState({cipherText: Enigma.normalizeText(data, Enigma.current.alphabet)})
+				this.setState({cipherText: data})
 			});
 		} catch(error) {
 			console.log(error)

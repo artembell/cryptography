@@ -39,10 +39,12 @@ test('railway (decipher)', () => {
 
 
 
-// test('columnar (encipher) with correct key', () => {
-//     const railway = Ciphers[1]
-//     expect(railway.encipher({text: 'cryptography', key: '1'})).toBe('cryptography')
-// })
+test('columnar (encipher)', () => {
+    Enigma.cipher = 1
+    // expect(railway.encipher({text: 'cryptography', key: '1'})).toBe('cryptography')
+    expect(Enigma.encipher({text: 'cryptography', key: 'key'})).toBe('rtrhcpgpyoay')
+    // expect(railway.encipher({text: 'cryptography', key: '1'})).toBe('cryptography')
+})
 
 test('vigenere (encipher)', () => {
     Enigma.cipher = 2
